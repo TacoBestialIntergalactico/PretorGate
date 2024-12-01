@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "clase",
+    "slug": "clase",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/Encrypt.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/Encrypt.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00687B"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#00687B"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
