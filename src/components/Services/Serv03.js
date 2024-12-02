@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-function ServRoomServicesScreen() {
+function Serv03() {
     return (
         <View style={styles.container}>
-            <Text>Room Services Screen !</Text>
+            <Text>Spa Screen !</Text>
             <StatusBar style="auto" />
         </View>
     );
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ServRoomServicesScreen;
+export default Serv03;

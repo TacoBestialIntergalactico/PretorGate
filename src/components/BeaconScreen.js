@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { useRoute } from '@react-navigation/native'
-import { StyleSheet, View, Alert } from 'react-native';
-import { NativeBaseProvider, useColorModeValue, Center, Box, Heading, VStack, FormControl, Input, Link, HStack, Button, Text  } from 'native-base';
-import ToggleDarkMode from '../../ToggleDarkMode';
+import { StyleSheet, Alert } from 'react-native';
+import { NativeBaseProvider, Center, Box, Heading, VStack, FormControl, Input, Link, HStack, Button, Text  } from 'native-base';
+
 import theme from '../../theme';
 
 const Login = ({ navigation, route }) => {
@@ -19,7 +18,7 @@ const Login = ({ navigation, route }) => {
   };
 
   return (
-    <Center w="100%" h="100%" bg={useColorModeValue('light.background.50', 'dark.background.900')}>
+    <Center w="100%" h="100%" >
       <Box safeArea p="2" py="8" w="90%" maxW="290">
         <Heading size="lg" fontWeight="600" color="coolGray.800" _dark={{
           color: "warmGray.50"
@@ -64,7 +63,6 @@ const Login = ({ navigation, route }) => {
               Sign Up
             </Link>
           </HStack>
-          <ToggleDarkMode />
         </VStack>
       </Box>
     </Center>

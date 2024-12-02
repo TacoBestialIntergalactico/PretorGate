@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-function ActRoyalValleyScreen() {
+function SettingsScreen() {
     return (
         <View style={styles.container}>
-            <Text>Activitie Resort - Royal Valley Screen !</Text>
+            <Text>Settings Screen !</Text>
             <StatusBar style="auto" />
         </View>
     );
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ActRoyalValleyScreen;
+export default SettingsScreen;

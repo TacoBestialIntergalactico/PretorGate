@@ -1,16 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
 
-function ActivitiesScreen({ navigation }) {
+const SearchBar = ({ searchQuery, setSearchQuery }) => {
+  return (
+    <View style={styles.searchContainer}>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search activities..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+    </View>
+  );
+};
+
+function SearchScreen({ navigation }) {
   const [activities, setActivities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredActivities, setFilteredActivities] = useState([]);
 
   useEffect(() => {
     fetch('http://192.168.1.6:8081/src/data/Activities.json')
       .then(response => response.json())
-      .then(data => setActivities(data))
+      .then(data => {
+        setActivities(data);
+        setFilteredActivities(data);
+      })
       .catch(error => console.error(error));
   }, []);
+
+  useEffect(() => {
+    if (searchQuery) {
+      const filteredData = activities.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredActivities(filteredData);
+    } else {
+      setFilteredActivities(activities);
+    }
+  }, [searchQuery, activities]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('ActivityViewScreen', { activity: item })}>
@@ -22,8 +52,9 @@ function ActivitiesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <FlatList
-        data={activities}
+        data={filteredActivities}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
       />
@@ -37,6 +68,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
+  },
+  searchContainer: {
+    marginBottom: 16,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingLeft: 8,
   },
   card: {
     backgroundColor: '#f8f8f8',
@@ -65,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActivitiesScreen;
+export default SearchScreen;

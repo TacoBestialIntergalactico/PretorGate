@@ -3,10 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-
-import theme from './theme';
-import ToggleDarkMode from './ToggleDarkMode';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Pantalla splash Animada
 import SplashScreen from './src/components/SplashScreen';
@@ -22,46 +20,76 @@ import HostingScreen from './src/components/Drawer/HostingScreen';
 import DevicesScreen from './src/components/Drawer/DevicesScreen';
 import AccessCodeScreen from './src/components/AccessCodeScreen';
 
+import SearchScreen from './src/components/Drawer/SearchScreen';
+import SettingsScreen from './src/components/Drawer/SettingsScreen';
+
 // Componentes de navegacion Services - Activities
-import ActMustangMountainsScreen from './src/components/Activities/ActMustangMountainsScreen';
-import ActRoyalValleyScreen from './src/components/Activities/ActRoyalValleyScreen';
-import ActSkiAlpineHeightsScreen from './src/components/Activities/ActSkiAlpineHeightsScreen';
-import ActSkyDivingAlpineHeightsScreen from './src/components/Activities/ActSkyDivingAlpineHeightsScreen';
+import ActivityViewScreen from './src/components/Activities/ActivityViewScreen';
 
-import ServRestaurantScreen from './src/components/Services/ServRestaurantScreen';
-import ServRoomServicesScreen from './src/components/Services/ServRoomServicesScreen';
-import ServSpaScreen from './src/components/Services/ServSpaScreen';
 
-import { NativeBaseProvider, useColorMode, useColorModeValue } from 'native-base';
+import Serv02 from './src/components/Services/Serv02';
+import Serv01 from './src/components/Services/Serv01';
+import Serv03 from './src/components/Services/Serv03';
+
+import { NativeBaseProvider } from 'native-base';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigatorHome = () => (
-  <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-        if (route.name === 'Services') {
-          iconName = focused ? 'information' : 'information-outline';
-        } else if (route.name === 'Activities') {
-          iconName = focused ? 'format-list-bulleted' : 'format-list-bulleted-type';
-        }
-        return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: 'tomato',
-      tabBarInactiveTintColor: 'gray',
-    })}
-  >
-    <Tab.Screen name="Services" component={ServicesScreen} />
-    <Tab.Screen name="Activities" component={ActivitiesScreen} />
-  </Tab.Navigator>
+  <View style={{ flex: 1 }}>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarLabel: () => (
+          <Text style={{ color: 'black', fontWeight: 'normal' }}>
+            {route.name}
+          </Text>
+        ),
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Services') {
+            iconName = 'bell';
+          } else if (route.name === 'Activities') {
+            iconName = 'calendar';
+          }
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'cyan',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: { position: 'absolute', top: 0, left: 0, right: 0 },
+        tabBarIndicatorStyle: { backgroundColor: 'cyan' },
+        animation: 'shift',
+      })}
+    >
+      <Tab.Screen name="Services" component={ServicesScreen} />
+      <Tab.Screen name="Activities" component={ActivitiesScreen} />
+    </Tab.Navigator>
+  </View>
 );
 
 const DrawerNavigatorApp = () => (
-  <Drawer.Navigator initialRouteName="Home">
-    <Drawer.Screen name="Home" component={TabNavigatorHome} />
+  <Drawer.Navigator
+    initialRouteName="Home"
+    screenOptions={({ navigation }) => ({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
+          <MaterialCommunityIcons name="menu" size={24} color="black" style={{ marginLeft: 16 }} />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <MaterialCommunityIcons name="magnify" size={24} color="black" style={{ marginRight: 16 }} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+            <MaterialCommunityIcons name="cog" size={24} color="black" style={{ marginRight: 16 }} />
+          </TouchableOpacity>
+        </View>
+      ),
+    })}
+  >
+    <Drawer.Screen name="Home" component={TabNavigatorHome} options={{ title: 'Resort - Alpine Heights' }} />
     <Drawer.Screen name="Account" component={AccountScreen} />
     <Drawer.Screen name="Room" component={RoomScreen} />
     <Drawer.Screen name="Hosting" component={HostingScreen} />
@@ -72,15 +100,18 @@ const DrawerNavigatorApp = () => (
 const StackNavigatorApp = () => (
   <Stack.Navigator initialRouteName="Beacon">
     <Stack.Screen name="Beacon" component={BeaconScreen} />
+    <Stack.Screen
+      name="Main"
+      component={DrawerNavigatorApp}
+      options={{ headerShown: false }} // Ocultar el encabezado en la pantalla Main
+    />
     <Stack.Screen name="Access" component={AccessCodeScreen} />
-    <Stack.Screen name="Main" component={DrawerNavigatorApp} />
-    <Stack.Screen name="Resort - Royal Valley" component={ActRoyalValleyScreen} />
-    <Stack.Screen name="Mustang Mountains" component={ActMustangMountainsScreen} />
-    <Stack.Screen name="Ski - Alpine Heights" component={ActSkiAlpineHeightsScreen} />
-    <Stack.Screen name="Sky Diving - Alpine Heights" component={ActSkyDivingAlpineHeightsScreen} />
-    <Stack.Screen name="Restaurant" component={ServRestaurantScreen} />
-    <Stack.Screen name="Room Services" component={ServRoomServicesScreen} />
-    <Stack.Screen name="Spa" component={ServSpaScreen} />
+    <Stack.Screen name="Search" component={SearchScreen}/>
+    <Stack.Screen name="Settings" component={SettingsScreen}/>
+    <Stack.Screen name="ActivityViewScreen" component={ActivityViewScreen} options={{ title: 'Activity Details' }} />
+    <Stack.Screen name="Serv02" component={Serv02} options={{ title: 'Restaurant' }}/>
+    <Stack.Screen name="Serv01" component={Serv01} options={{ title: 'Room Services' }}/>
+    <Stack.Screen name="Serv03" component={Serv03} options={{ title: 'Spa' }}/>
   </Stack.Navigator>
 );
 
@@ -108,4 +139,3 @@ const App = () => {
 };
 
 export default App;
-

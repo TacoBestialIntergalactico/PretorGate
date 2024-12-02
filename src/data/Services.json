@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "route": "Serv01",
+      "title": "Room Service",
+      "image": "./assets/images/ImgServ01.png"
+    },
+    {
+      "id": 2,
+      "route": "Serv02",
+      "title": "Restaurant",
+      "image": "./assets/images/ImgServ02.png"
+    },
+    {
+      "id": 3,
+      "route": "Serv03",
+      "title": "Spa",
+      "image": "./assets/images/ImgServ03.png"
+    }
+  ]
+  
