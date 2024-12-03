@@ -21,7 +21,7 @@ function SearchScreen({ navigation }) {
   const [filteredActivities, setFilteredActivities] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.1.6:8081/src/data/Activities.json')
+    fetch('http://10.1.1.1:3000/data/Activities.json')
       .then(response => response.json())
       .then(data => {
         setActivities(data);

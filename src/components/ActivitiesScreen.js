@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Text, FlatList, Image, TouchableOpacity } from 'react-native';
 
 function ActivitiesScreen({ navigation }) {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.1.6:8081/src/data/Activities.json')
+    fetch('http://10.1.1.1:3000/data/Activities.json')
       .then(response => response.json())
       .then(data => setActivities(data))
       .catch(error => console.error(error));
@@ -21,14 +21,14 @@ function ActivitiesScreen({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <FlatList
         data={activities}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
       />
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
 

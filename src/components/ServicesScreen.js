@@ -6,7 +6,7 @@ function ServicesScreen({ navigation }) {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    fetch('http://192.168.1.6:8081/src/data/Services.json')
+    fetch('http://10.1.1.1:3000/data/Services.json')
       .then(response => response.json())
       .then(data => setServices(data))
       .catch(error => console.error(error));

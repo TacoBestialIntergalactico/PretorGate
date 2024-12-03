@@ -18,7 +18,6 @@ import AccountScreen from './src/components/Drawer/AccountScreen';
 import RoomScreen from './src/components/Drawer/RoomScreen';
 import HostingScreen from './src/components/Drawer/HostingScreen';
 import DevicesScreen from './src/components/Drawer/DevicesScreen';
-import AccessCodeScreen from './src/components/AccessCodeScreen';
 
 import SearchScreen from './src/components/Drawer/SearchScreen';
 import SettingsScreen from './src/components/Drawer/SettingsScreen';
@@ -27,9 +26,9 @@ import SettingsScreen from './src/components/Drawer/SettingsScreen';
 import ActivityViewScreen from './src/components/Activities/ActivityViewScreen';
 
 
-import Serv02 from './src/components/Services/Serv02';
-import Serv01 from './src/components/Services/Serv01';
-import Serv03 from './src/components/Services/Serv03';
+import RestaurantScreen from './src/components/Services/RestaurantScreen';
+import RoomServiceScreen from './src/components/Services/RoomServiceScreen';
+import SpaServiceScreen from './src/components/Services/SpaServiceScreen';
 
 import { NativeBaseProvider } from 'native-base';
 
@@ -105,13 +104,12 @@ const StackNavigatorApp = () => (
       component={DrawerNavigatorApp}
       options={{ headerShown: false }} // Ocultar el encabezado en la pantalla Main
     />
-    <Stack.Screen name="Access" component={AccessCodeScreen} />
     <Stack.Screen name="Search" component={SearchScreen}/>
     <Stack.Screen name="Settings" component={SettingsScreen}/>
     <Stack.Screen name="ActivityViewScreen" component={ActivityViewScreen} options={{ title: 'Activity Details' }} />
-    <Stack.Screen name="Serv02" component={Serv02} options={{ title: 'Restaurant' }}/>
-    <Stack.Screen name="Serv01" component={Serv01} options={{ title: 'Room Services' }}/>
-    <Stack.Screen name="Serv03" component={Serv03} options={{ title: 'Spa' }}/>
+    <Stack.Screen name="RestaurantScreen" component={RestaurantScreen} options={{ title: 'Restaurant' }}/>
+    <Stack.Screen name="RoomServiceScreen" component={RoomServiceScreen} options={{ title: 'Room Services' }}/>
+    <Stack.Screen name="SpaServiceScreen" component={SpaServiceScreen} options={{ title: 'Spa' }}/>
   </Stack.Navigator>
 );
 
