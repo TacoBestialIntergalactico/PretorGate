@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Modal, TextInput, Animated, ScrollView, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { VStack } from 'native-base';
+import { useLanguage } from './LanguageContext';
 
 const BeaconScreen = ({ navigation }) => {
   const [connections, setConnections] = useState([
@@ -15,13 +16,25 @@ const BeaconScreen = ({ navigation }) => {
   const [newConnection, setNewConnection] = useState('');
   const [fadeAnim] = useState(new Animated.Value(1));
   const [logo, setLogo] = useState(null);
+  const { language } = useLanguage(); // Obtener el idioma del contexto
+  const [texts, setTexts] = useState({});
 
   useEffect(() => {
-    fetch('http://10.1.1.4:3000/data/Logo.json')
-      .then(response => response.json())
-      .then(data => setLogo(data.logo))
-      .catch(error => console.error(error));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+        const data = await response.json();
+        const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+        const imgData = data.Images;
+        setTexts(menuData.App); // Establecer los textos traducidos
+        setLogo(imgData.logo.image); // Establecer la URL de la imagen del logo
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [language]); // Actualizar cuando cambie el idioma
 
   const handleAddConnection = () => {
     if (newConnection.trim()) {
@@ -41,13 +54,14 @@ const BeaconScreen = ({ navigation }) => {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.topSection}>
-        {logo && <Image source={{ uri: logo.image }} style={styles.backgroundImage} />}
+        {logo && <Image source={{ uri: logo }} style={styles.imageStyle} />}
       </View>
       <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <VStack style={styles.connectionsContainer}>
             <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
               <MaterialCommunityIcons name="plus" size={24} color="white" />
+              <Text style={styles.addButtonText}>{texts.beaconplus}</Text>
             </TouchableOpacity>
             <FlatList
               data={connections}
@@ -70,14 +84,14 @@ const BeaconScreen = ({ navigation }) => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>New Connection</Text>
+          <Text style={styles.modalText}>{texts.beaconplus}</Text>
           <TextInput
             style={styles.input}
             value={newConnection}
             onChangeText={setNewConnection}
           />
           <TouchableOpacity style={styles.modalButton} onPress={handleAddConnection}>
-            <Text style={styles.modalButtonText}>Add</Text>
+            <Text style={styles.modalButtonText}>{texts.add}</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -104,10 +118,10 @@ const styles = StyleSheet.create({
     width: '70%',
     alignSelf: 'center',
   },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+  imageStyle: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
   beaconsText: {
     fontSize: 14,
@@ -146,6 +160,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: 'white',
+    marginLeft: 8,
   },
   modalView: {
     margin: 20,

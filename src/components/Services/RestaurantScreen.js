@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Animated, ScrollView, Image, FlatList, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Animated, ScrollView, Image, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLanguage } from '../LanguageContext';
 
 function RestaurantScreen() {
-    const [roomServiceImages, setRoomServiceImages] = useState([]);
+    const [restaurantImages, setRestaurantImages] = useState([]);
+    const [texts, setTexts] = useState({});
     const [isCalling, setIsCalling] = useState(false);
     const [fadeAnim] = useState(new Animated.Value(1));
 
+    const { language } = useLanguage(); // Obtener el idioma del contexto
+
     useEffect(() => {
-        fetch('http://10.1.1.1:3000/data/Restaurant.json')
-            .then(response => response.json())
-            .then(data => setRoomServiceImages(data))
-            .catch(error => console.error(error));
-    }, []);
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+                const data = await response.json();
+                const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+                const imgData = data.Images;
+                setTexts(menuData.App);
+                setRestaurantImages(imgData.Restaurant);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, [language]); // Actualizar cuando cambie el idioma
 
     const handleCallRoomService = () => {
         setIsCalling(true);
@@ -39,7 +53,7 @@ function RestaurantScreen() {
     const renderItem = ({ item }) => (
         <View style={styles.card}>
             <Image
-                source={{ uri: item.image }}
+                source={{ uri: item }}
                 style={styles.image}
             />
         </View>
@@ -49,18 +63,18 @@ function RestaurantScreen() {
         <ScrollView style={styles.container}>
             <TouchableOpacity style={styles.button} onPress={handleCallRoomService}>
                 <MaterialCommunityIcons name="phone" size={24} color="black" />
-                <Text style={styles.buttonText}>Make a Reservation</Text>
+                <Text style={styles.buttonText}>{texts.makeReservation}</Text>
             </TouchableOpacity>
             {isCalling && (
                 <Animated.View style={[styles.callingBox, { opacity: fadeAnim }]}>
                     <MaterialCommunityIcons name="phone" size={24} color="white" />
-                    <Text style={styles.callingText}>Calling Restaurant...</Text>
+                    <Text style={styles.callingText}>{texts.callingRestaurant}...</Text>
                 </Animated.View>
             )}
             <FlatList
-                data={roomServiceImages}
+                data={restaurantImages}
                 renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 numColumns={3}
                 columnWrapperStyle={{ justifyContent: 'space-between' }}
             />

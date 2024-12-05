@@ -4,10 +4,10 @@
     "slug": "clase",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/Encrypt.png",
+    "icon": "./assets/images/Pretor.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/Encrypt.png",
+      "image": "./assets/images/Pretor.png",
       "resizeMode": "contain",
       "backgroundColor": "#00687B"
     },

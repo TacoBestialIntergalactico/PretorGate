@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { useLanguage } from '../LanguageContext';
 
 function ActivityViewScreen({ route }) {
-  const { activity } = route.params;
+  const { activity, language } = route.params;
+  const [activityData, setActivityData] = useState({});
+
+  useEffect(() => {
+    const fetchActivityData = async () => {
+      try {
+        const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+        const data = await response.json();
+        const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+        const activityInfo = menuData.Activities.find(item => item.id === activity.id);
+        setActivityData(activityInfo);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchActivityData();
+  }, [language, activity.id]);
 
   return (
     <View style={styles.container}>
       <Image source={{ uri: activity.image }} style={styles.image} />
-      <Text style={styles.title}>{activity.title}</Text>
-      <Text style={styles.description}>{activity.activity}</Text>
+      <Text style={styles.title}>{activityData.title}</Text>
+      <Text style={styles.description}>{activityData.activity}</Text>
       <StatusBar style="auto" />
     </View>
   );

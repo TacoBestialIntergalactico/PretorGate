@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Box, Text, Input, Button, VStack, Divider } from 'native-base';
-import {StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLanguage } from '../LanguageContext';
 
 function AccountScreen() {
     const [userInfo, setUserInfo] = useState({});
+    const [texts, setTexts] = useState({});
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const { language } = useLanguage(); // Obtener el idioma del contexto
 
     useEffect(() => {
-        fetch('http://10.1.1.1:3000/data/Account.json')
-            .then(response => response.json())
-            .then(data => {
-                setUserInfo(data);
-                setEmail(data.email);
-                setPhoneNumber(data.phone);
-            })
-            .catch(error => console.error(error));
-    }, []);
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+                const data = await response.json();
+                const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+                const accData = data.Account;
+                setTexts(menuData.App);
+                setUserInfo(accData);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, [language]); // Actualizar cuando cambie el idioma
 
     const handleUpdate = () => {
         const updatedUserInfo = { ...userInfo, email, phone, creditcard };
@@ -39,7 +48,7 @@ function AccountScreen() {
                     </Box>
                     <Divider my={4} bg="#ccc" w="90%" />
                     <Box bg="#f8f8f8" p={4} borderRadius={10} w="90%">
-                        <Text fontSize="lg" fontWeight="bold" mb={2}>Account Details</Text>
+                        <Text fontSize="lg" fontWeight="bold" mb={2}>{texts.accDetails}</Text>
                         <VStack space={4}>
                             <Input
                                 placeholder="Email"
@@ -51,15 +60,15 @@ function AccountScreen() {
                                 value={phoneNumber}
                                 onChangeText={setPhoneNumber}
                             />
-                            <Button onPress={handleUpdate}>Update</Button>
+                            <Button onPress={handleUpdate}>{texts.update}</Button>
                         </VStack>
                     </Box>
                     <Divider my={4} bg="#ccc" w="90%" />
                     <Box bg="#f8f8f8" p={4} borderRadius={10} w="90%" alignItems="center">
-                        <Text fontSize="lg" fontWeight="bold">Credit Card</Text>
+                        <Text fontSize="lg" fontWeight="bold">{texts.creditcard}</Text>
                         <MaterialCommunityIcons name="credit-card" size={40} color="black" />
-                        <Text>Banco Azteca</Text>
-                        <Text>Visa</Text>
+                        <Text>{userInfo.creditcardService}</Text>
+                        <Text>{userInfo.creditcardType}</Text>
                         <Text>{userInfo.creditcard}</Text>
                     </Box>
                 </VStack>
@@ -71,9 +80,9 @@ function AccountScreen() {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      padding: 16,
+        flex: 1,
+        backgroundColor: '#fff',
+        padding: 16,
     },
 });
 

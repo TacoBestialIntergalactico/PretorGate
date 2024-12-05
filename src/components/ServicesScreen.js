@@ -1,16 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import { Box } from 'native-base';
+import { useLanguage } from './LanguageContext';
 
 function ServicesScreen({ navigation }) {
   const [services, setServices] = useState([]);
+  const { language } = useLanguage(); // Obtener el idioma del contexto
 
   useEffect(() => {
-    fetch('http://10.1.1.1:3000/data/Services.json')
-      .then(response => response.json())
-      .then(data => setServices(data))
-      .catch(error => console.error(error));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+        const data = await response.json();
+        const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+        setServices(menuData.Services.map((service, index) => ({
+          ...service,
+          image: data.Images.Services[index],
+        }))); // Combinar servicios con URLs de imágenes
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [language]); // Actualizar cuando cambie el idioma
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.card} onPress={() => navigation.navigate(item.route)}>
@@ -26,6 +40,7 @@ function ServicesScreen({ navigation }) {
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
       />
+      <Box style={styles.box}></Box>
       <StatusBar style="auto" />
     </View>
   );
@@ -56,7 +71,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginTop: 8,
-  }
+  },
+  box: {
+    marginTop: 36,
+    marginBottom: 36,
+  },
 });
 
 export default ServicesScreen;

@@ -1,30 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, Image, ScrollView } from 'react-native';
+import { Box } from 'native-base';
+import { useLanguage } from '../LanguageContext';
 
 const SpaServiceScreen = () => {
-  const [service, setService] = useState(null);
+  const [spaImg, setSpaImg] = useState(null);
+  const [texts, setTexts] = useState({});
+
+  const { language } = useLanguage(); // Obtener el idioma del contexto
 
   useEffect(() => {
-    fetch('http://10.1.1.1:3000/data/ExtraServices.json')
-      .then(response => response.json())
-      .then(data => setService(data[0])) // Asumiendo que solo hay un servicio en el JSON
-      .catch(error => console.error(error));
-  }, []);
+      const fetchData = async () => {
+          try {
+              const response = await fetch('http://10.1.1.2:3000/data/Root.json');
+              const data = await response.json();
+              const menuData = language === 'es' ? data.MenuES : data.MenuENG;
+              const imgData = data.Images;
+              setTexts(menuData.ExtraServices);
+              setSpaImg(imgData.Services[2]);
+          } catch (error) {
+              console.error(error);
+          }
+      };
 
-  if (!service) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+      fetchData();
+  }, [language]); // Actualizar cuando cambie el idioma
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: service.image }} style={styles.image} />
-      <Text style={styles.title}>{service.title}</Text>
-      <Text style={styles.description}>{service.activity}</Text>
+      <Image source={{ uri: spaImg }} style={styles.image} />
+      <Text style={styles.title}>{texts.title}</Text>
+      <Text style={styles.description}>{texts.activity}</Text>
+      <Box style={styles.box}></Box>
       <StatusBar style="auto" />
     </ScrollView>
   );
@@ -50,6 +58,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginTop: 8,
+  },
+  box: {
+    marginTop: 36,
+    marginBottom: 36,
   },
 });
 
